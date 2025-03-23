@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_management_api/ui/screans/forget_password_verification.dart';
+import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
 
@@ -13,6 +14,17 @@ class LoginScren extends StatefulWidget {
 
 class _LoginScrenState extends State<LoginScren> {
   onTapSignInButton() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) {
+          return MainBottomNavScrean();
+        },
+      ),
+      (predicate) => false,
+    );
+  }
+
+  onTapSignUpButton() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
@@ -73,7 +85,7 @@ class _LoginScrenState extends State<LoginScren> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: onTapSignInButton,
                   child: Icon(
                     Icons.arrow_forward_outlined,
                     color: Colors.white,
@@ -97,14 +109,14 @@ class _LoginScrenState extends State<LoginScren> {
                           children: [
                             TextSpan(text: 'Don\'t have account? '),
                             TextSpan(
-                              text: 'Sign In',
+                              text: 'Sign Up',
                               style: TextStyle(
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold,
                               ),
                               recognizer:
                                   TapGestureRecognizer()
-                                    ..onTap = onTapSignInButton,
+                                    ..onTap = onTapSignUpButton,
                             ),
                           ],
                         ),
