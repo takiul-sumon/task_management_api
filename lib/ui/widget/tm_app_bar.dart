@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_management_api/ui/screans/updateProfileScrean.dart';
 
 class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TMAppBar({super.key});
@@ -9,7 +10,12 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.green,
       title: Row(
         children: [
-          CircleAvatar(),
+          GestureDetector(
+            onTap: () {
+              onTapUpdateProfile(context);
+            },
+            child: CircleAvatar(),
+          ),
           SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -35,6 +41,17 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icon(Icons.logout, color: Colors.white),
           ),
         ],
+      ),
+    );
+  }
+
+  onTapUpdateProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return UpdateProfileScrean();
+        },
       ),
     );
   }
