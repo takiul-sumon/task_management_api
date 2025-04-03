@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_management_api/ui/screans/forget_password_verification.dart';
@@ -76,6 +77,13 @@ class _LoginScrenState extends State<LoginScren> {
                   controller: _emailTEController,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
+                  validator: (String? value) {
+                    String email = value?.trim() ?? '';
+                    if (EmailValidator.validate(email) == false) {
+                      return "Enter a Valid Email";
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
