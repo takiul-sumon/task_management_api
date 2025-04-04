@@ -124,12 +124,13 @@ class NetworkClient {
         'headers:$headers\n'
         'responseBody:$responseBody\n',
       );
+    } else {
+      _logger.i(
+        'Url: $url\n'
+        'statusCode:$statusCode\n'
+        'headers:$headers\n'
+        'responseBody:$responseBody\n',
+      );
     }
-    _logger.i(
-      'Url: $url\n'
-      'statusCode:$statusCode\n'
-      'headers:$headers\n'
-      'responseBody:$responseBody\n',
-    );
   }
 }

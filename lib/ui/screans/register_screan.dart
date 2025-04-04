@@ -14,14 +14,23 @@ class RegisterScrean extends StatefulWidget {
 }
 
 class _RegisterScreanState extends State<RegisterScrean> {
-  void onTapSignInButton() {
-    Navigator.of(context).pop();
-  }
+  bool _regristrationInProgress = false;
+
+  final TextEditingController _emailTEController = TextEditingController();
+  final TextEditingController _firstnameTEController = TextEditingController();
+  final TextEditingController _lastnameTEController = TextEditingController();
+  final TextEditingController _mobileTEController = TextEditingController();
+  final TextEditingController _passwordTEController = TextEditingController();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   void onTapSubmitButton() {
     if (_formkey.currentState!.validate()) {
       _registerUser();
     }
+  }
+
+  void onTapSignInButton() {
+    Navigator.of(context);
   }
 
   Future<void> _registerUser() async {
@@ -41,31 +50,32 @@ class _RegisterScreanState extends State<RegisterScrean> {
     _regristrationInProgress = false;
     setState(() {});
     if (response.isSuccess) {
+      _clearTextFields();
       showShackBarMessenger(context, "Successful");
     } else {
       showShackBarMessenger(context, response.errorMessage.toString(), true);
     }
   }
 
-  void onTapForgotButton() {}
-  bool _regristrationInProgress = false;
+  void _clearTextFields() {
+    _emailTEController.clear();
+    _firstnameTEController.clear();
+    _lastnameTEController.clear();
+    _mobileTEController.clear();
+    _passwordTEController.clear();
+  }
 
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _firstnameTEController = TextEditingController();
-  final TextEditingController _lastnameTEController = TextEditingController();
-  final TextEditingController _mobileTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
+  void onTapForgotButton() {}
+
   @override
   void dispose() {
-    super.dispose();
     _emailTEController.dispose();
     _firstnameTEController.dispose();
     _lastnameTEController.dispose();
     _mobileTEController.dispose();
     _passwordTEController.dispose();
+    super.dispose();
   }
-
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {

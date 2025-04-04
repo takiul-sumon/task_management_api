@@ -9,7 +9,7 @@ void showShackBarMessenger(
     SnackBar(
       content: Text(
         message,
-        style: TextStyle(backgroundColor: isError ? Colors.red : Colors.black),
+        style: TextStyle(backgroundColor: isError ? Colors.red :null),
       ),
     ),
   );
