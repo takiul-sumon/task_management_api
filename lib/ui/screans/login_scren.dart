@@ -1,10 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:task_management_api/data/services/network_client.dart';
+import 'package:task_management_api/data/urls.dart';
 import 'package:task_management_api/ui/screans/forget_password_verification.dart';
 import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
+import 'package:task_management_api/ui/widget/class%20CenterCircularProgressIndicator%20extends%20StatelessWidget.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
+import 'package:task_management_api/ui/widget/snackBarMessenger.dart';
 
 class LoginScren extends StatefulWidget {
   const LoginScren({super.key});
@@ -14,25 +18,49 @@ class LoginScren extends StatefulWidget {
 }
 
 class _LoginScrenState extends State<LoginScren> {
+  bool _loginInProgress = false;
+
   onTapSignInButton() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) {
-          return MainBottomNavScrean();
-        },
-      ),
-      (predicate) => false,
-    );
+    if (_formkey.currentState!.validate()) {
+      _login();
+    }
   }
 
   onTapSignUpButton() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return RegisterScrean();
+          return MainBottomNavScrean();
         },
       ),
     );
+  }
+
+  Future<void> _login() async {
+    _loginInProgress = true;
+    setState(() {});
+    Map<String, dynamic> requestBody = {
+      "email": _emailTEController.text.trim(),
+      "password": _passwordTEController.text,
+    };
+    NetworkResponse response = await NetworkClient.postRequest(
+      url: Urls.registerUrl,
+      body: requestBody,
+    );
+    _loginInProgress = false;
+    setState(() {});
+    if (response.isSuccess) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) {
+            return MainBottomNavScrean();
+          },
+        ),
+        (predicate) => false,
+      );
+    } else {
+      showShackBarMessenger(context, response.errorMessage.toString(), true);
+    }
   }
 
   void onTapForgotButton() {
@@ -92,11 +120,15 @@ class _LoginScrenState extends State<LoginScren> {
                   keyboardType: TextInputType.visiblePassword,
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: onTapSignInButton,
-                  child: Icon(
-                    Icons.arrow_forward_outlined,
-                    color: Colors.white,
+                Visibility(
+                  visible: _loginInProgress == false,
+                  replacement: CenterCircularProgressIndicator(),
+                  child: ElevatedButton(
+                    onPressed: onTapSignInButton,
+                    child: Icon(
+                      Icons.arrow_forward_outlined,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
