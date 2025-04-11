@@ -1,8 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:task_management_api/data/models/login_model.dart';
 import 'package:task_management_api/data/services/network_client.dart';
 import 'package:task_management_api/data/urls.dart';
+import 'package:task_management_api/ui/controller/auth_controller.dart';
 import 'package:task_management_api/ui/screans/forget_password_verification.dart';
 import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
@@ -30,7 +32,7 @@ class _LoginScrenState extends State<LoginScren> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return MainBottomNavScrean();
+          return RegisterScrean();
         },
       ),
     );
@@ -50,6 +52,11 @@ class _LoginScrenState extends State<LoginScren> {
     _loginInProgress = false;
     setState(() {});
     if (response.isSuccess) {
+      LoginModel loginModel = LoginModel.fromJson(response.data!);
+      AuthController.saveUserInformation(
+        loginModel.token,
+        loginModel.userModel,
+      );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) {
