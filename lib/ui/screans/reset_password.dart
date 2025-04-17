@@ -34,9 +34,9 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   @override
   void dispose() {
-    super.dispose();
     _setnewPasswordTECOntroller.dispose();
     _confirmNewPasswordTEController.dispose();
+    super.dispose();
   }
 
   final TextEditingController _setnewPasswordTECOntroller =

@@ -19,8 +19,8 @@ class _ForgetPasswordVerificationState
 
   @override
   void dispose() {
-    super.dispose();
     _emailTEController.dispose();
+    super.dispose();
   }
 
   void onTapSigninButton() {}
@@ -62,7 +62,9 @@ class _ForgetPasswordVerificationState
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          return ForgetPinVerification();
+                          return ForgetPinVerification(
+                            email: _emailTEController.toString(),
+                          );
                         },
                       ),
                     );

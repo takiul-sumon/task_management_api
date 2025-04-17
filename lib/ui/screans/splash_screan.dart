@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:task_management_api/ui/controller/auth_controller.dart';
 import 'package:task_management_api/ui/screans/login_scren.dart';
+import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/utils/assets_path.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
 
@@ -19,10 +21,16 @@ class _splash_ScreanState extends State<splash_Screan> {
   }
 
   Future<void> _movetoNext() async {
+    final bool isLoggedIn = await AuthController.checkIfUserLoggedIn();
+
     await Future.delayed(Duration(seconds: 2));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScren()),
+      MaterialPageRoute(
+        builder:
+            (context) =>
+                isLoggedIn ? const MainBottomNavScrean() : const LoginScren(),
+      ),
     );
   }
 

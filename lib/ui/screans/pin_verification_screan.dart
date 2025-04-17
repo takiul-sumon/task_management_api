@@ -6,7 +6,8 @@ import 'package:task_management_api/ui/screans/reset_password.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
 
 class ForgetPinVerification extends StatefulWidget {
-  const ForgetPinVerification({super.key});
+  const ForgetPinVerification({super.key, required this.email});
+  final String email;
 
   @override
   State<ForgetPinVerification> createState() => _ForgetPinVerificationState();

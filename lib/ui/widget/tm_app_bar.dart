@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:task_management_api/ui/controller/auth_controller.dart';
+import 'package:task_management_api/ui/screans/login_scren.dart';
 import 'package:task_management_api/ui/screans/updateProfileScrean.dart';
 
 class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,7 +18,14 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () {
               onTapUpdateProfile(context);
             },
-            child: CircleAvatar(),
+            child: CircleAvatar(
+              backgroundImage:
+                  _shoidlShowImage(AuthController.userModel?.photo)
+                      ? MemoryImage(
+                        base64Decode(AuthController.userModel?.photo ?? ''),
+                      )
+                      : null,
+            ),
           ),
           SizedBox(width: 10),
           Expanded(
@@ -22,13 +33,13 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Rahim Hasan',
+                  AuthController.userModel?.fullName ?? 'Name',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge!.copyWith(color: Colors.white),
                 ),
                 Text(
-                  'rahim@gmail.com',
+                  AuthController.userModel?.email ?? 'Email',
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall!.copyWith(color: Colors.white),
@@ -37,12 +48,16 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => _onTapLogoutButton(context),
             icon: Icon(Icons.logout, color: Colors.white),
           ),
         ],
       ),
     );
+  }
+
+  bool _shoidlShowImage(String? photo) {
+    return photo != null && photo.isNotEmpty;
   }
 
   onTapUpdateProfile(BuildContext context) {
@@ -56,7 +71,20 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+  Future<void> _onTapLogoutButton(BuildContext context) async {
+    await AuthController.clearUserData();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return LoginScren();
+        },
+      ),
+      (predicate) => false,
+    );
+  }
+
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
