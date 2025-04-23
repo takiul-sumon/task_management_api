@@ -1,17 +1,24 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:task_management_api/ui/screans/forget_password_verification.dart';
+import 'package:task_management_api/data/services/network_client.dart';
+import 'package:task_management_api/data/urls.dart';
+import 'package:task_management_api/ui/screans/forget_password_email_verification.dart';
+import 'package:task_management_api/ui/screans/login_scren.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
+import 'package:task_management_api/ui/widget/snackBarMessenger.dart';
 
 class ResetPassword extends StatefulWidget {
-  const ResetPassword({super.key});
-
+  const ResetPassword({super.key, required this.email, required this.pin});
+  final String email;
+  final String pin;
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  bool _getNewTaskInProgress = false;
+
   onTapSignInButton() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -23,10 +30,11 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   void onTapSubmitButton() {
+    _registerUser();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return ForgetPasswordVerification();
+          return LoginScren();
         },
       ),
     );
@@ -44,6 +52,32 @@ class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController _confirmNewPasswordTEController =
       TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  // Future<void> _registerUser() async {
+  //   _regristrationInProgress = true;
+  //   setState(() {});
+  //   Map<String, dynamic> requestBody = {
+  //     "email": _emailTEController.text.trim(),
+  //     "password": _passwordTEController.text,
+  //   };
+  //   NetworkResponse response = await NetworkClient.postRequest(
+  //     url: Urls.registerUrl,
+  //     body: requestBody,
+  //   );
+  //   _regristrationInProgress = false;
+  //   setState(() {});
+  //   if (response.isSuccess) {
+  //     _clearTextFields();
+  //     showShackBarMessenger(context, "Successful");
+  //   } else {
+  //     showShackBarMessenger(context, response.errorMessage.toString(), true);
+  //   }
+  // }
+
+  // void _clearTextFields() {
+  //   _emailTEController.clear();
+  //   _passwordTEController.clear();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -121,5 +155,73 @@ class _ResetPasswordState extends State<ResetPassword> {
         ),
       ),
     );
+  }
+
+  // Future<void> _registerUser() async {
+  //   _getNewTaskInProgress = true;
+  //   setState(() {});
+  //   Map<String, dynamic> requestBody = {
+  //     "email": widget.email.trim(),
+  //     "OTP":widget.pin,
+  //     "password": _confirmNewPasswordTEController.text,
+  //   };
+  //   NetworkResponse response = await NetworkClient.postRequest(
+  //     url: Urls.recoveryResetPassword,
+  //     body: requestBody,
+  //   );
+  //   _getNewTaskInProgress = false;
+  //   setState(() {});
+  //   if (response.isSuccess) {
+  //     showDialog(context: context, builder: (context) {
+  //       return Text("Successful");
+  //     },);
+  //     showShackBarMessenger(context, "Successful");
+  //   } else {
+  //     showShackBarMessenger(context, response.errorMessage.toString(), true);
+  //   }
+  // }
+
+  Future<void> _registerUser() async {
+    _getNewTaskInProgress = true;
+    setState(() {});
+
+    Map<String, dynamic> requestBody = {
+      "email": widget.email.trim(),
+      "OTP": widget.pin, // Make sure you have this variable in your widget
+      "password": _confirmNewPasswordTEController.text,
+    };
+
+    NetworkResponse response = await NetworkClient.postRequest(
+      url: Urls.recoveryResetPassword,
+      body: requestBody,
+    );
+
+    _getNewTaskInProgress = false;
+    setState(() {});
+
+    if (response.isSuccess) {
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Success"),
+            content: Text("Your password has been reset successfully."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+
+      showShackBarMessenger(context, "Successful");
+    } else {
+      showShackBarMessenger(context, response.errorMessage.toString(), true);
+    }
   }
 }

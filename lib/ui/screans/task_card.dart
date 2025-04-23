@@ -1,10 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:task_management_api/data/models/task_model.dart';
+import 'package:task_management_api/data/services/network_client.dart';
+import 'package:task_management_api/data/urls.dart';
+import 'package:task_management_api/ui/widget/snackBarMessenger.dart';
 
 enum Taskstatus { snew, progress, complete, cancle }
 
-class TaskCard extends StatelessWidget {
-  const TaskCard({super.key, required this.task});
+class TaskCard extends StatefulWidget {
+  const TaskCard({super.key, required this.task, required this.taskModel});
   final Taskstatus task;
+  final TaskModel taskModel;
+
+
+  @override
+  State<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends State<TaskCard> {
+  void showUpdateStatusDialogue() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                onTap: () {
+                  if (isSelected('New')) return;
+                  _changeTaskStatus('New');
+                  popDialogue();
+                },
+                title: Text("New"),
+                trailing: isSelected('Completed') ? Icon(Icons.done) : null,
+              ),
+              ListTile(
+                onTap: () {
+                  if (isSelected('Progress')) return;
+                  _changeTaskStatus('Progress');
+                  popDialogue();
+                },
+                title: Text("Progress"),
+                trailing: isSelected('New') ? Icon(Icons.done) : null,
+              ),
+              ListTile(
+                onTap: () {
+                  if (isSelected('Completed')) return;
+                  _changeTaskStatus('Completed');
+                  popDialogue();
+                },
+                title: Text("Completed"),
+                trailing: isSelected('Completed') ? Icon(Icons.done) : null,
+              ),
+              ListTile(
+                onTap: () {
+                  if (isSelected('Cancelled')) return;
+                  _changeTaskStatus('Cancelled');
+                  popDialogue();
+                },
+                title: Text("Cancelled"),
+                trailing: isSelected('Completed') ? Icon(Icons.done) : null,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  bool inProgress = false;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,11 +80,11 @@ class TaskCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Title will be here',
+              widget.taskModel.title,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Text('Description will be here'),
-            Text('Date will be here:11/22/2025'),
+            Text(widget.taskModel.description),
+            Text('Date : ${widget.taskModel.createData}'),
             Row(
               children: [
                 Chip(
@@ -31,8 +95,11 @@ class TaskCard extends StatelessWidget {
                   backgroundColor: chooseColor(),
                 ),
                 Spacer(),
-                IconButton(onPressed: () {}, icon: Icon(Icons.delete)),
-                IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                IconButton(onPressed: _deleteTask, icon: Icon(Icons.delete)),
+                IconButton(
+                  onPressed: showUpdateStatusDialogue,
+                  icon: Icon(Icons.edit),
+                ),
               ],
             ),
           ],
@@ -41,14 +108,48 @@ class TaskCard extends StatelessWidget {
     );
   }
 
+  void popDialogue() {
+    Navigator.pop(context);
+  }
+
+  Future<void> _changeTaskStatus(String status) async {
+    inProgress = true;
+    setState(() {});
+    final NetworkResponse response = await NetworkClient.getRequest(
+      url: Urls.updateTaskStatusUrl(widget.taskModel.id, status),
+    );
+    inProgress = false;
+    setState(() {});
+    if (response.isSuccess) {
+    } else {
+      showShackBarMessenger(context, response.errorMessage, true);
+    }
+  }
+
+  Future<void> _deleteTask() async {
+    inProgress = true;
+    setState(() {});
+    final NetworkResponse response = await NetworkClient.getRequest(
+        url: Urls.deleteTaskUrl(widget.taskModel.id));
+
+    inProgress = false;
+    if (response.isSuccess) {
+      // widget.refreshList();
+    } else {
+      setState(() {});
+      showShackBarMessenger(context, response.errorMessage, true);
+    }
+  }
+
+  bool isSelected(String status) => widget.taskModel.status == status;
   Color chooseColor() {
-    if (task == Taskstatus.snew) {
+    if (widget.task == Taskstatus.snew) {
       return Colors.blue;
-    } else if (task == Taskstatus.progress) {
+    } else if (widget.task == Taskstatus.progress) {
       return Colors.red;
-    } else if (task == Taskstatus.complete) {
+    } else if (widget.task == Taskstatus.complete) {
       return Colors.orange;
-    } else if (task == Taskstatus.cancle) {
+    } else if (widget.task == Taskstatus.cancle) {
       return Colors.green;
     } else {
       return Colors.transparent;

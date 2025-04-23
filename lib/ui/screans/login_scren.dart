@@ -5,7 +5,7 @@ import 'package:task_management_api/data/models/login_model.dart';
 import 'package:task_management_api/data/services/network_client.dart';
 import 'package:task_management_api/data/urls.dart';
 import 'package:task_management_api/ui/controller/auth_controller.dart';
-import 'package:task_management_api/ui/screans/forget_password_verification.dart';
+import 'package:task_management_api/ui/screans/forget_password_email_verification.dart';
 import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
 import 'package:task_management_api/ui/widget/class%20CenterCircularProgressIndicator%20extends%20StatelessWidget.dart';
@@ -78,7 +78,7 @@ class _LoginScrenState extends State<LoginScren> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return ForgetPasswordVerification();
+          return ForgotPasswordVerifyEmailScreen();
         },
       ),
     );

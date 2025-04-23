@@ -8,12 +8,10 @@ class AuthController {
   static UserModel? userModel;
 
   static const String _tokenKey = 'token';
-  static const String _userDataKey = 'token';
+  static const String _userDataKey = 'user-data';
 
-  static Future<void> saveUserInformation(
-    String accessToken,
-    UserModel user,
-  ) async {
+  // Save user information
+  static Future<void> saveUserInformation(String accessToken, UserModel user) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString(_tokenKey, accessToken);
     sharedPreferences.setString(_userDataKey, jsonEncode(user.toJson()));
@@ -22,19 +20,20 @@ class AuthController {
     userModel = user;
   }
 
+  // Get user information
   static Future<void> getUserInformation() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? accessToken = sharedPreferences.getString(_tokenKey);
-    String? saveUserModelString = sharedPreferences.getString(_userDataKey);
-    if (saveUserModelString != null) {
-      UserModel savedUserModel = UserModel.fromJson(
-        jsonDecode(saveUserModelString),
-      );
+    String? savedUserModelString = sharedPreferences.getString(_userDataKey);
+    if (savedUserModelString != null) {
+      UserModel savedUserModel = UserModel.fromJson(jsonDecode(savedUserModelString));
       userModel = savedUserModel;
     }
+
     token = accessToken;
   }
 
+  // Check if user already logged in
   static Future<bool> checkIfUserLoggedIn() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? userAccessToken = sharedPreferences.getString(_tokenKey);

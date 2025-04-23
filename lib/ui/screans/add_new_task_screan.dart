@@ -109,12 +109,22 @@ class _AddNewTaskScreanState extends State<AddNewTaskScrean> {
     }
   }
 
+  @override
+  void dispose() {
+    _titleTEController.dispose();
+    _descriptionTEController.dispose();
+
+    super.dispose();
+  }
+
   void _clearTextFields() {
     _titleTEController.clear();
     _descriptionTEController.clear();
   }
 
   onTapSubmitButton() {
-    if (_fromKey.currentState!.validate()) {}
+    if (_fromKey.currentState!.validate()) {
+      _addnewTask();
+    }
   }
 }
