@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_management_api/data/services/network_client.dart';
 import 'package:task_management_api/data/urls.dart';
-import 'package:task_management_api/ui/screans/forget_password_email_verification.dart';
 import 'package:task_management_api/ui/screans/login_scren.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
 import 'package:task_management_api/ui/widget/screan_Background.dart';
@@ -30,7 +29,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   void onTapSubmitButton() {
-    _registerUser();
+    _resetPassword();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
@@ -52,32 +51,6 @@ class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController _confirmNewPasswordTEController =
       TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-
-  // Future<void> _registerUser() async {
-  //   _regristrationInProgress = true;
-  //   setState(() {});
-  //   Map<String, dynamic> requestBody = {
-  //     "email": _emailTEController.text.trim(),
-  //     "password": _passwordTEController.text,
-  //   };
-  //   NetworkResponse response = await NetworkClient.postRequest(
-  //     url: Urls.registerUrl,
-  //     body: requestBody,
-  //   );
-  //   _regristrationInProgress = false;
-  //   setState(() {});
-  //   if (response.isSuccess) {
-  //     _clearTextFields();
-  //     showShackBarMessenger(context, "Successful");
-  //   } else {
-  //     showShackBarMessenger(context, response.errorMessage.toString(), true);
-  //   }
-  // }
-
-  // void _clearTextFields() {
-  //   _emailTEController.clear();
-  //   _passwordTEController.clear();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +89,16 @@ class _ResetPasswordState extends State<ResetPassword> {
                   keyboardType: TextInputType.visiblePassword,
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: onTapSubmitButton,
-                  child: Text('Confirm', style: TextStyle(color: Colors.white)),
+                Visibility(
+                  visible: _getNewTaskInProgress == false,
+                  replacement: CircularProgressIndicator(),
+                  child: ElevatedButton(
+                    onPressed: onTapSubmitButton,
+                    child: Text(
+                      'Confirm',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Center(
@@ -157,31 +137,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  // Future<void> _registerUser() async {
-  //   _getNewTaskInProgress = true;
-  //   setState(() {});
-  //   Map<String, dynamic> requestBody = {
-  //     "email": widget.email.trim(),
-  //     "OTP":widget.pin,
-  //     "password": _confirmNewPasswordTEController.text,
-  //   };
-  //   NetworkResponse response = await NetworkClient.postRequest(
-  //     url: Urls.recoveryResetPassword,
-  //     body: requestBody,
-  //   );
-  //   _getNewTaskInProgress = false;
-  //   setState(() {});
-  //   if (response.isSuccess) {
-  //     showDialog(context: context, builder: (context) {
-  //       return Text("Successful");
-  //     },);
-  //     showShackBarMessenger(context, "Successful");
-  //   } else {
-  //     showShackBarMessenger(context, response.errorMessage.toString(), true);
-  //   }
-  // }
-
-  Future<void> _registerUser() async {
+  Future<void> _resetPassword() async {
     _getNewTaskInProgress = true;
     setState(() {});
 

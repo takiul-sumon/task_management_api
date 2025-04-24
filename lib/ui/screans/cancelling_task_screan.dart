@@ -28,7 +28,7 @@ class _CancelTaskScreanState extends State<CancelTaskScrean> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Visibility(
-        visible: _getAllCancelledTaskList() == false,
+        visible: _getCancelledaskInProgress == false,
         replacement: CircularProgressIndicator(),
         child: SizedBox(
           height: 600,

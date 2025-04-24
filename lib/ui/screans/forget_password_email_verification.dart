@@ -21,7 +21,15 @@ class _ForgotPasswordVerifyEmailScreenState
   final TextEditingController _emailTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _getNewTaskInProgress = false;
+  onTapSubmitEmail() {
+    if (_formKey.currentState!.validate()) {
+      _forgetPasswordWithEmail();
+
+      print('Hello World');
+    }
+  }
+
+  bool _forgetPasswordinProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +64,21 @@ class _ForgotPasswordVerifyEmailScreenState
                   validator: (String? value) {
                     String email = value?.trim() ?? '';
                     if (EmailValidator.validate(email) == false) {
-                      return "Enter a Valid Email";
+                      return "Enter a Registered Email";
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _onTapSubmitButton,
-                  child: Icon(
-                    Icons.arrow_circle_right_outlined,
-                    color: Colors.white,
+                Visibility(
+                  visible: _forgetPasswordinProgress == false,
+                  replacement: CircularProgressIndicator(),
+                  child: ElevatedButton(
+                    onPressed: onTapSubmitEmail,
+                    child: Icon(
+                      Icons.arrow_circle_right_outlined,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -102,8 +114,8 @@ class _ForgotPasswordVerifyEmailScreenState
     );
   }
 
-  Future<void> _getAllNewTaskList() async {
-    _getNewTaskInProgress = true;
+  Future<void> _forgetPasswordWithEmail() async {
+    _forgetPasswordinProgress = true;
 
     setState(() {});
     final NetworkResponse response = await NetworkClient.getRequest(
@@ -114,23 +126,23 @@ class _ForgotPasswordVerifyEmailScreenState
         context,
         "Successfully Sent 6 digit pin to your email",
       );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  ForgetPinVerification(email: _emailTEController.text),
+        ),
+      );
     } else {
       showShackBarMessenger(context, response.errorMessage, true);
     }
-    _getNewTaskInProgress = false;
+    _forgetPasswordinProgress = false;
     setState(() {});
   }
 
-  void _onTapSubmitButton() {
-    _getAllNewTaskList();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => ForgetPinVerification(email: _emailTEController.text),
-      ),
-    );
-  }
+
 
   void _onTapSignInButton() {
     Navigator.pop(context);

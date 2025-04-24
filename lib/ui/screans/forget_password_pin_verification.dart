@@ -17,6 +17,16 @@ class ForgetPinVerification extends StatefulWidget {
 }
 
 class _ForgetPinVerificationState extends State<ForgetPinVerification> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  onTapSubmitEmail() {
+    if (_formKey.currentState!.validate()) {
+      onTapSubmitPin();
+
+      print('Hello World');
+    }
+  }
+
   bool _getNewTaskInProgress = false;
 
   onTapSignInButton() {
@@ -32,22 +42,8 @@ class _ForgetPinVerificationState extends State<ForgetPinVerification> {
   }
 
   onTapSubmitButton() {
-    _getAllNewTaskList();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return ResetPassword(
-            email: widget.email,
-            pin: _pincodeTEController.text,
-          );
-        },
-      ),
-      (pre) => false,
-    );
+    onTapSubmitPin();
   }
-
- 
 
   void onTapForgotButton() {}
 
@@ -62,6 +58,7 @@ class _ForgetPinVerificationState extends State<ForgetPinVerification> {
           padding: const EdgeInsets.all(24.0),
           child: Form(
             key: _formkey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -155,7 +152,7 @@ class _ForgetPinVerificationState extends State<ForgetPinVerification> {
     );
   }
 
-  Future<void> _getAllNewTaskList() async {
+  Future<void> onTapSubmitPin() async {
     _getNewTaskInProgress = true;
 
     setState(() {});
@@ -164,6 +161,19 @@ class _ForgetPinVerificationState extends State<ForgetPinVerification> {
     );
     if (response.isSuccess) {
       showShackBarMessenger(context, "Set New Password");
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return ResetPassword(
+              email: widget.email,
+              pin: _pincodeTEController.text,
+            );
+          },
+        ),
+        (pre) => false,
+      );
     } else {
       showShackBarMessenger(context, response.errorMessage, true);
     }
