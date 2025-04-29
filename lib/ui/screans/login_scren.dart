@@ -1,10 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:task_management_api/data/models/login_model.dart';
 import 'package:task_management_api/data/services/network_client.dart';
 import 'package:task_management_api/data/urls.dart';
 import 'package:task_management_api/ui/controller/auth_controller.dart';
+import 'package:task_management_api/ui/controller/login_controller.dart';
 import 'package:task_management_api/ui/screans/forget_password_email_verification.dart';
 import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
 import 'package:task_management_api/ui/screans/register_screan.dart';
@@ -20,10 +24,10 @@ class LoginScren extends StatefulWidget {
 }
 
 class _LoginScrenState extends State<LoginScren> {
-  bool _loginInProgress = false;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final LoginController _loginController = Get.find<LoginController>();
 
   onTapSignInButton() {
     if (_formkey.currentState!.validate()) {
@@ -43,24 +47,12 @@ class _LoginScrenState extends State<LoginScren> {
   }
 
   Future<void> _login() async {
-    _loginInProgress = true;
-    setState(() {});
-    Map<String, dynamic> requestBody = {
-      "email": _emailTEController.text.trim(),
-      "password": _passwordTEController.text,
-    };
-    NetworkResponse response = await NetworkClient.postRequest(
-      url: Urls.loginUrl,
-      body: requestBody,
+    final bool isSuccess = await _loginController.login(
+      _emailTEController.text.trim(),
+      _passwordTEController.text,
     );
-    _loginInProgress = false;
-    setState(() {});
-    if (response.isSuccess) {
-      LoginModel loginModel = LoginModel.fromJson(response.data!);
-      AuthController.saveUserInformation(
-        loginModel.token,
-        loginModel.userModel,
-      );
+
+    if (isSuccess) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) {
@@ -70,7 +62,7 @@ class _LoginScrenState extends State<LoginScren> {
         (predicate) => false,
       );
     } else {
-      showShackBarMessenger(context, response.errorMessage.toString(), true);
+      showShackBarMessenger(context, _loginController.errorMessage!, true);
     }
   }
 
@@ -127,16 +119,19 @@ class _LoginScrenState extends State<LoginScren> {
                   keyboardType: TextInputType.visiblePassword,
                 ),
                 const SizedBox(height: 20),
-                Visibility(
-                  visible: _loginInProgress == false,
-                  replacement: CenterCircularProgressIndicator(),
-                  child: ElevatedButton(
-                    onPressed: onTapSignInButton,
-                    child: Icon(
-                      Icons.arrow_forward_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
+                GetBuilder<LoginController>(
+                  builder:
+                      (controller) => Visibility(
+                        visible: controller.loginInProgress == false,
+                        replacement: CenterCircularProgressIndicator(),
+                        child: ElevatedButton(
+                          onPressed: onTapSignInButton,
+                          child: Icon(
+                            Icons.arrow_forward_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                 ),
                 const SizedBox(height: 30),
                 Center(

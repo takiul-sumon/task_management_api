@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_management_api/ui/controller/controller_binder.dart';
 import 'package:task_management_api/ui/screans/splash_screan.dart';
 
 class TaskManager extends StatefulWidget {
@@ -13,8 +15,9 @@ class TaskManager extends StatefulWidget {
 class _TaskManagerState extends State<TaskManager> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       navigatorKey: TaskManager.navigatorKey,
+      initialBinding: ControllerBinder(),
       theme: ThemeData(
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(fontWeight: FontWeight.w400, color: Colors.grey),
