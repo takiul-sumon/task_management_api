@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:task_management_api/ui/controller/auth_controller.dart';
 import 'package:task_management_api/ui/screans/login_scren.dart';
 import 'package:task_management_api/ui/screans/main_bottom_nav_screan.dart';
@@ -37,7 +36,9 @@ class _splash_ScreanState extends State<splash_Screan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ScreanBackground(child: SvgPicture.asset(AssetsPath.logoSvg)),
+      body: ScreanBackground(
+        child: Image.asset(AssetsPath.logoSvg, fit: BoxFit.contain),
+      ),
     );
   }
 }

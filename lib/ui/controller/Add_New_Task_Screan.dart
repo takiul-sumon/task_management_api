@@ -26,7 +26,6 @@ class AddNewTaskScreanController extends GetxController {
       isSuccess = true;
       _errorMessage = null;
     } else {
-      _errorMessage:
       response.errorMessage;
     }
 

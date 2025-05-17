@@ -194,13 +194,13 @@ class _UpdateProfileScreanState extends State<UpdateProfileScrean> {
         Container(
           height: 60,
           width: 100,
-          child: Center(
-            child: Text('Photos', style: TextStyle(color: Colors.white)),
-          ),
 
           decoration: BoxDecoration(
             color: Colors.black45,
             borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+          ),
+          child: Center(
+            child: Text('Photos', style: TextStyle(color: Colors.white)),
           ),
         ),
         SizedBox(width: 5),
